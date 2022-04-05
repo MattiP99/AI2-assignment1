@@ -1,0 +1,49 @@
+robot:
+	2 mover: From initial position to loading bay
+		DISTANCE: 
+			Straight line
+			No interferences
+			
+			if NO CREATES:
+				time: 10 distance units/time unit
+		CREATES:
+			WEIGHT:
+			Light: <50kg (Moved by one robot)
+				time: distance* weight/100 
+				IF moved by two robots:
+					time:distance*weight/150
+			Heavy: >50Kg (Moved by two robots)
+				time: distance* weight/100
+			POSITION:
+				From the distance to the loading nbay (KNOWN)	
+		LAODING:
+			Duration: 4 Time units (loading a single crate at the time)
+			No crates can be put on the loading bay during the
+4 time units mentioned above.
+
+	1 loader: load something from the loading bay to the conveyor belt
+	
+
+ES:
+
+-types: Loader, Mover - Robot	
+-Predicati: 
+	- at__robot Mover LOCATION
+	- at_crate Crate LOCATION
+	- Holding Robot
+	- Empty Loading_bay
+	
+	
+-function:
+	- weight_cage ?w - cage   (>= (weight_cage) 50)
+	- battery_level ?b - robot
+	- full_battery 
+	- distance_
+	
+- process:
+	(:process refuel
+		:parameters (?x - robot)
+		:precondition (< (battery-level ?x) 10)
+		:effect (and(increase (battery-level ?x) 20)))))
+	
+		
