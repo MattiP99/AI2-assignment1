@@ -1,11 +1,11 @@
-(define (problem airo2-group-K-problem-1)   
-	(:domain airo2-group-k-domain)
+(define (problem airo2_group_K_problem_1)   
+	(:domain airo2_group_k_domain)
     
 	(:objects 
-		mover1 mover2 ; move the crates
-        loader1 ; load the crates
-        crate1 crate2 crate3 ; crates to move
-        loading_bay conveyor_belt ; locations
+		mover1 mover2 - obj ; move the crates
+        loader1 - obj ; load the crates
+        crate1 crate2 crate3 - obj ; crates to move
+        loading_bay conveyor_belt - obj ; locations
 	)
 
 	(:init

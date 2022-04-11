@@ -1,4 +1,4 @@
-(define (domain airo2-group-k-domain)
+(define (domain airo2_group_k_domain)
 
     (:requirements
         :adl
@@ -7,30 +7,34 @@
         ;:time
     )
 
+    (:types 
+		obj - Object
+	)
+
     (:predicates
-        (mover ?r)
-        (loader ?r)
-        (crate ?c) 
-        (location ?l)
-        (empty ?rb) ; robot r and/or loading bay b is empty 
-        (at_location ?c) ; crate c is at location 
-        (is_pointed ?c ?r) ; crate c is pointed by robot r
-        (is_busy ?r) ; robot r is busy 
+        (mover ?r - obj)
+        (loader ?r - obj)
+        (crate ?c - obj) 
+        (location ?l - obj)
+        (empty ?rb - obj) ; robot r and/or loading bay b is empty 
+        (at_location ?c - obj) ; crate c is at location 
+        (is_pointed ?c - obj ?r - obj) ; crate c is pointed by robot r
+        (is_busy ?r - obj) ; robot r is busy 
     )
 
     (:functions
-        (weight_crate ?c)
+        (weight_crate ?c - obj) - number
         ; (battery_level)
-        (timer ?r)
-        (distance_cl ?c ?lb); distance between the crate and the loading bay
-        (distance_cr ?c ?r); distance between the crate and the robot
+        (timer ?r - obj) - number
+        (distance_cl ?c - obj ?lb - obj) - number; distance between the crate and the loading bay
+        (distance_cr ?c - obj ?r - obj) - number; distance between the crate and the robot
     )
     
     ; --- ACTIONS --- ;
     
     ; The mover picks up the crate when it has reached it
     (:action pick_up
-        :parameters (?m ?c)
+        :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m)
                         (= (distance_cr ?c ?m) 0)
                     )
@@ -39,7 +43,7 @@
     
     ; If the loading bay if free, the mover puts down the crate
     (:action put_down
-        :parameters (?m ?l ?c ?loc)
+        :parameters (?m - obj ?l - obj ?c - obj ?loc - obj)
         :precondition (and (mover ?m) (loader ?l) (crate ?c) (location ?loc)
                         (empty ?loc) (empty ?l)
                         (= (distance_cl ?c ?loc) 0)
@@ -49,7 +53,7 @@
     
     ; The loader pick up the crate from the loading bay
     (:action load
-        :parameters (?l ?loc)
+        :parameters (?l - obj ?loc - obj)
         :precondition (and (loader ?l) (location ?loc)
                         (not(empty ?loc)) (empty ?l)
                         (= (timer ?l) 4)
@@ -59,7 +63,7 @@
     
     ; The loader put down the crate on the conveyor belt
     (:action unload
-        :parameters (?l ?c)
+        :parameters (?l - obj ?c - obj)
         :precondition (and (loader ?l) (crate ?c)
                         (not(empty ?l)) (= (timer ?l) 0)
                     )
@@ -70,7 +74,7 @@
     
     ; The mover points to a light crate
     (:event pointing_light
-        :parameters (?m ?c)
+        :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m)
                         (empty ?m) (not(is_busy ?m)) ; (not(is_pointed ?c ?m2))
                         (> (distance_cr ?c ?m) 0)
@@ -82,7 +86,7 @@
     
     ; The mover points to a heavy crate ONLY IF also the other mover is free
     (:event pointing_heavy
-        :parameters (?m1 ?m2 ?c)
+        :parameters (?m1 - obj ?m2 - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m1) (mover ?m2)
                         (empty ?m1) (not(is_busy ?m1))
                         (empty ?m2) (not(is_busy ?m2))
@@ -100,7 +104,7 @@
     
     ; The mover reached the crate
     (:event reached_crate
-        :parameters (?m ?c ?loc)
+        :parameters (?m - obj ?c - obj ?loc - obj)
         :precondition (and (crate ?c) (location ?loc) (mover ?m)
                         (= (distance_cr ?c ?m) 0)
                         (> (distance_cl ?c ?loc) 0)
@@ -111,7 +115,7 @@
     
     ; The mover reached the loading bay with the crate
     (:event reached_loading_bay
-        :parameters (?m ?c ?loc)
+        :parameters (?m - obj ?c - obj ?loc - obj)
         :precondition (and (crate ?c) (location ?loc) (mover ?m)
                         (= (distance_cl ?c ?loc) 0)
                         (> (timer ?m) 0)
@@ -121,7 +125,7 @@
     
     ; The loading bay is full
     (:event start_loader
-        :parameters (?l ?loc)
+        :parameters (?l - obj ?loc - obj)
         :precondition (and (loader ?l) (location ?loc) 
                         (not(empty ?loc)) (= (timer ?l) 0)
                     )
@@ -132,7 +136,7 @@
     
     ; The mover moves against the crate 
     (:process move_empty
-        :parameters (?m ?c)
+        :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m) 
                         (empty ?m) (is_pointed ?c ?m)
                         (> (distance_cr ?c ?m) 0)
@@ -144,7 +148,7 @@
     
     ; After the pick_up, the robot start to move against the loading bay
     (:process move_full
-        :parameters (?m ?c ?loc)
+        :parameters (?m - obj ?c - obj ?loc - obj)
         :precondition (and (crate ?c) (mover ?m) (location ?loc)
                         (not(empty ?m)) 
                         (> (distance_cl ?c ?loc) 0)
@@ -155,7 +159,7 @@
     
     ; The loader moves the crate from the loading bay to the conveyor belt
     (:process move_loader
-        :parameters (?l ?loc)
+        :parameters (?l - obj ?loc - obj)
         :precondition (and (loader ?l) (location ?loc)
                         (> (timer ?l) 0)
                     )
