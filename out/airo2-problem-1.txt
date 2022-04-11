@@ -1,0 +1,20 @@
+Domain parsed
+Apr 11, 2022 2:25:24 PM ENHSP parseDomainProblem
+SEVERE: null
+java.lang.NullPointerException: Cannot invoke "org.antlr.runtime.tree.Tree.getText()" because the return value of "org.antlr.runtime.tree.Tree.getChild(int)" is null
+	at com.hstairs.ppmajal.problem.PDDLProblem.addObjects(PDDLProblem.java:1004)
+	at com.hstairs.ppmajal.problem.PDDLProblem.parseProblem(PDDLProblem.java:957)
+	at com.hstairs.ppmajal.problem.PDDLProblem.<init>(PDDLProblem.java:168)
+	at ENHSP.parseDomainProblem(ENHSP.java:115)
+	at ENHSP.parsingDomainAndProblem(ENHSP.java:138)
+	at main.main(main.java:31)
+
+java.lang.NullPointerException: Cannot invoke "org.apache.commons.lang3.tuple.Pair.getKey()" because "<local2>" is null
+	at ENHSP.parsingDomainAndProblem(ENHSP.java:139)
+	at main.main(main.java:31)
+Apr 11, 2022 2:25:24 PM ENHSP planning
+SEVERE: null
+java.lang.NullPointerException: Cannot invoke "com.hstairs.ppmajal.problem.PDDLProblem.getActions()" because the return value of "ENHSP.getProblem()" is null
+	at ENHSP.printStats(ENHSP.java:340)
+	at ENHSP.planning(ENHSP.java:164)
+	at main.main(main.java:32)
