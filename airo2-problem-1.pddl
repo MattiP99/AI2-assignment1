@@ -5,23 +5,28 @@
 		mover1 mover2 - obj ; move the crates
         loader1 - obj ; load the crates
         crate1 crate2 crate3 - obj ; crates to move
-        loading_bay conveyor_belt - obj ; locations
+        loading_bay - obj ; locations
 	)
 
 	(:init
         (mover mover1) (mover mover2)
         (loader loader1)
         (crate crate1) (crate crate2) (crate crate3)
-        (location loading_bay) (location conveyor_belt)
-        (empty mover1) (empty mover2) (empty loader1)
-        (empty loading_bay)
+        (location loading_bay)
+        (is_empty mover1) (is_empty mover2) (is_empty loader1)
+        (is_empty loading_bay)
         
+        ;(heavy crate1)
+
         ; Crates' weight
 		(= (weight_crate crate1) 70) 
         (= (weight_crate crate2) 20)
         (= (weight_crate crate3) 20)
         
-        (= (timer) 0) ; initialization timer
+        ; Initialization timer
+        (= (timer mover1) 0) 
+        (= (timer mover2) 0)
+        (= (timer loader1) 0)
 
         ; Distances between crates and loading bay
         (= (distance_cl crate1 loading_bay) 10)
@@ -40,9 +45,20 @@
 
 	(:goal
 		(and 
-			(at_location crate1)
+			;(at_location crate1)
+        
+            ;(= (distance_cl crate1 loading_bay) 0)
+            ;(not(is_empty mover1)) (not(is_empty mover2))
+            ;(= (distance_cr crate1 mover1) 0) (= (distance_cr crate1 mover2) 0)
+            ;(is_busy mover1) (is_busy mover2)
+
             (at_location crate2)
             (at_location crate3)
+            
+            ;(= (distance_cl crate2 loading_bay) 0)
+            ;(not(is_empty mover1))
+            ;(= (distance_cr crate2 mover1) 0)
+            ;(is_busy mover1)
 		)
 	)
 )
