@@ -1,0 +1,100 @@
+Domain parsed
+Problem parsed
+Grounding..
+Grounding Time: 39
+Aibr Preprocessing
+|F|:26
+|X|:15
+Aibr Preprocessing
+|A|:40
+|P|:21
+|E|:24
+Delta time heuristic model:1.0
+Delta time planning model:1.0
+Delta time search-execution model:1.0
+Delta time validation model:1
+H1 Setup Time (msec): 2
+Setting horizon to:NaN
+Helpful Action Pruning Activated
+Running Greedy Best First Search
+h(n = s_0)=358.0
+ g(n)= 1.0 h(n)=221.0
+ g(n)= 2.0 h(n)=164.0
+ g(n)= 3.0 h(n)=157.0
+ g(n)= 4.0 h(n)=141.0
+ g(n)= 5.0 h(n)=101.0
+ g(n)= 6.0 h(n)=100.0
+ g(n)= 9.0 h(n)=91.0
+ g(n)= 10.0 h(n)=80.0
+ g(n)= 18.0 h(n)=78.0
+ g(n)= 19.0 h(n)=68.0
+ g(n)= 19.0 h(n)=62.0
+ g(n)= 29.0 h(n)=57.0
+ g(n)= 31.0 h(n)=51.0
+ g(n)= 32.0 h(n)=45.0
+ g(n)= 33.0 h(n)=39.0
+ g(n)= 36.0 h(n)=21.0
+ g(n)= 38.0 h(n)=13.0
+ g(n)= 39.0 h(n)=11.0
+ g(n)= 40.0 h(n)=8.0
+ g(n)= 45.0 h(n)=6.0
+ g(n)= 46.0 h(n)=4.0
+ g(n)= 47.0 h(n)=3.0
+ g(n)= 51.0 h(n)=2.0
+ g(n)= 52.0 h(n)=1.0
+ g(n)= 53.0 h(n)=0.0
+Extracting plan with execution delta: 1.0
+Problem Solved
+
+Found Plan:
+0: (pointing_light mover2 crate4)
+0.0: -----waiting---- [1.0]
+1.0: (pick_up mover2 crate4)
+1.0: -----waiting---- [3.0]
+3.0: (put_down mover2 mover1 crate4 loading_bay)
+3.0: (load loader1 crate4 loading_bay)
+3.0: -----waiting---- [4.0]
+4.0: (pointing_light mover1 crate3)
+4.0: -----waiting---- [6.0]
+6.0: (pick_up mover1 crate3)
+6.0: -----waiting---- [7.0]
+7.0: (unload loader1 crate4)
+7.0: (put_down mover1 mover2 crate3 loading_bay)
+7.0: (load loader1 crate3 loading_bay)
+7.0: -----waiting---- [10.0]
+10.0: (pointing_light mover1 crate4)
+10.0: -----waiting---- [11.0]
+11.0: (pick_up mover1 crate4)
+11.0: (unload loader1 crate3)
+11.0: (put_down mover1 mover2 crate4 loading_bay)
+11.0: (pointing_heavy mover2 mover1 crate1)
+11.0: -----waiting---- [12.0]
+12.0: (pick_up_together mover1 mover2 crate1)
+12.0: -----waiting---- [13.0]
+13.0: (load loader1 crate4 loading_bay)
+13.0: -----waiting---- [17.0]
+17.0: (unload loader1 crate4)
+17.0: (put_down_together mover1 mover2 crate1 loading_bay)
+17.0: (pointing_heavy mover2 mover1 crate2)
+17.0: -----waiting---- [19.0]
+19.0: (pick_up_together mover1 mover2 crate2)
+19.0: -----waiting---- [20.0]
+20.0: (load loader1 crate1 loading_bay)
+20.0: -----waiting---- [24.0]
+24.0: (put_down_together mover1 mover2 crate2 loading_bay)
+24.0: (unload loader1 crate1)
+24.0: (load loader1 crate2 loading_bay)
+24.0: -----waiting---- [28.0]
+28.0: (unload loader1 crate2)
+
+Plan-Length:57
+Elapsed Time: 28.0
+Metric (Search):53.0
+Planning Time (msec): 667
+Heuristic Time (msec): 329
+Search Time (msec): 428
+Expanded Nodes:5490
+States Evaluated:8957
+Fixed constraint violations during search (zero-crossing):0
+Number of Dead-Ends detected:0
+Number of Duplicates detected:6945
