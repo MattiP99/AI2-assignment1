@@ -1,10 +1,12 @@
 (define (domain airo2_group_k_domain)
 
     (:requirements
-        :adl
+        ;:adl
+        ;:fluents
+        :time
         :typing
-        :fluents
-    )
+        :negative-preconditions :equality
+     :disjunctive-preconditions)
 
     (:types 
 		obj - Object ; general type
@@ -36,18 +38,19 @@
     
     ; The mover points to a light crate
     (:action pointing_light
-        :parameters (?m - obj ?c - obj) ;?m2 - obj)
-        :precondition (and (crate ?c) (mover ?m) ;(mover ?m2)
-                        ;(not(= ?m1 ?m2)) ; the movers are different
-                        (not(heavy ?c)) ; (< (weight_crate ?c) 50) ; light crate
-                        (not(on_load ?c))
-                        (is_empty ?m) 
-                        (not(is_busy ?m))
-                        (not(is_pointed ?c ?m)) 
-                        (> (distance_cr ?c ?m) 0)
-                        ;(> (distance_cr ?c ?m2) 0) ; the other mover is not going against the same crate
-                        (= (timer ?m) 0)
-                    ) 
+        :parameters (?m - obj ?c - obj) ;?m2 - obj
+        :precondition (and (mover ?m) (crate ?c) ;(mover ?m2) 
+            ;(not(= ?m ?m2)) ; the movers are different
+            (not(heavy ?c)) ; (< (weight_crate ?c) 50) ; light crate
+            (not(on_load ?c))
+            (is_empty ?m) 
+            (not(is_busy ?m))
+            (not(is_pointed ?c ?m)) 
+            ;(or (not(is_pointed ?c ?m2)) (and (is_pointed ?c ?m2) (= (distance_cr ?c ?m2) (distance_cr ?c ?m))))
+            (> (distance_cr ?c ?m) 0)
+            ;(> (distance_cr ?c ?m2) 0) ; the other mover is not going against the same crate
+            (= (timer ?m) 0)
+        ) 
         :effect (and (is_busy ?m) (is_pointed ?c ?m) (assign (timer ?m) 10))
     )
 
@@ -55,10 +58,10 @@
     (:process move_empty
         :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m) 
-                        (is_pointed ?c ?m) (is_busy ?m) ; action pointing_light
-                        (> (distance_cr ?c ?m) 0) ; event set_timer
-                        (= (timer ?m) 10)
-                    )  
+            (is_pointed ?c ?m) (is_busy ?m) ; action pointing_light
+            (> (distance_cr ?c ?m) 0) ; event set_timer
+            (= (timer ?m) 10)
+        )  
         :effect (and (decrease (distance_cr ?c ?m) (* (timer ?m) #t)))
     )
 
@@ -87,11 +90,11 @@
     (:process move_full
         :parameters (?m - obj ?c - obj ?loc - obj)
         :precondition (and (crate ?c) (mover ?m) (location ?loc)
-                        (not(is_empty ?m)) 
-                        (> (distance_cl ?c ?loc) 0)
-                        (> (timer ?m) 0)
-                        (not(heavy ?c))
-                    )
+            (not(is_empty ?m)) 
+            (> (distance_cl ?c ?loc) 0)
+            (> (timer ?m) 0)
+            (not(heavy ?c))
+        )
         :effect (and (decrease (distance_cl ?c ?loc) (* (timer ?m) #t)))
     )
 
@@ -99,14 +102,14 @@
     (:action put_down
         :parameters (?m1 - obj ?m2 -obj ?c - obj ?loc - obj) ;?l - obj)
         :precondition (and (mover ?m1) (mover ?m2) (crate ?c) (location ?loc) ;(loader ?l) 
-                        (not(= ?m1 ?m2))
-                        (is_pointed ?c ?m1) (not(is_empty ?m1)) (is_busy ?m1)
-                        (not (is_pointed ?c ?m2))
-                        (is_empty ?loc) 
-                        ;(is_empty ?l)
-                        (<= (distance_cl ?c ?loc) 0)
-                        (not(heavy ?c))
-                    )
+            (not(= ?m1 ?m2))
+            (is_pointed ?c ?m1) (not(is_empty ?m1)) (is_busy ?m1)
+            (not (is_pointed ?c ?m2))
+            (is_empty ?loc) 
+            ;(is_empty ?l)
+            (<= (distance_cl ?c ?loc) 0)
+            (not(heavy ?c))
+        )
         :effect (and (is_empty ?m1) (not(is_busy ?m1)) (not(is_pointed ?c ?m1)) (on_load ?c) (not(is_empty ?loc))
                     (assign (timer ?m1) 0))
     )
@@ -115,11 +118,11 @@
     (:action load
         :parameters (?l - obj ?c - obj ?loc - obj)
         :precondition (and (loader ?l) (crate ?c) (location ?loc)
-                        (on_load ?c) 
-                        (not(is_empty ?loc)) 
-                        (not(is_pointed ?c ?l)) (is_empty ?l)
-                        (= (timer ?l) 0)
-                    )
+            (on_load ?c) 
+            (not(is_empty ?loc)) 
+            (not(is_pointed ?c ?l)) (is_empty ?l)
+            (= (timer ?l) 0)
+        )
         :effect (and (not(on_load ?c)) (is_empty ?loc) (not(is_empty ?l)) (is_pointed ?c ?l) (assign (timer ?l) 4))
     )
 
@@ -127,9 +130,9 @@
     (:process move_loader
         :parameters (?l - obj)
         :precondition (and (loader ?l) 
-                        (not(is_empty ?l))
-                        (> (timer ?l) 0)
-                    )
+            (not(is_empty ?l))
+            (> (timer ?l) 0)
+        )
         :effect (and (decrease (timer ?l) #t))
     )
 
@@ -137,10 +140,10 @@
     (:action unload
         :parameters (?l - obj ?c - obj)
         :precondition (and (loader ?l) (crate ?c)
-                        (is_pointed ?c ?l) 
-                        (not(is_empty ?l)) 
-                        (= (timer ?l) 0)
-                    )
+            (is_pointed ?c ?l) 
+            (not(is_empty ?l)) 
+            (= (timer ?l) 0)
+        )
         :effect (and (is_empty ?l) (not(is_pointed ?c ?l)) (at_location ?c))
     )
 
@@ -150,57 +153,59 @@
     (:action pointing_heavy
         :parameters (?m1 - obj ?m2 - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m1) (mover ?m2)
-                        (not(= ?m1 ?m2)) ; the movers are different
-                        (is_empty ?m1) (not(is_busy ?m1)) (not(is_pointed ?c ?m1))
-                        (is_empty ?m2) (not(is_busy ?m2)) (not(is_pointed ?c ?m2))
-                        (> (distance_cr ?c ?m1) 0)
-                        (> (distance_cr ?c ?m2) 0)
-                        (>= (weight_crate ?c) 50)
-                        (= (timer ?m1) 0)
-                        (= (timer ?m2) 0)
-                    ) 
+            (not(= ?m1 ?m2)) ; the movers are different
+            (is_empty ?m1) (not(is_busy ?m1)) (not(is_pointed ?c ?m1))
+            (is_empty ?m2) (not(is_busy ?m2)) (not(is_pointed ?c ?m2))
+            (> (distance_cr ?c ?m1) 0)
+            (> (distance_cr ?c ?m2) 0)
+            (>= (weight_crate ?c) 50)
+            (= (timer ?m1) 0)
+            (= (timer ?m2) 0)
+        ) 
         :effect (and (assign (timer ?m1) 10) (assign (timer ?m2) 10)
-                    (is_busy ?m1) (is_busy ?m2)
-                    (is_pointed ?c ?m1) (is_pointed ?c ?m2)
-                )
+            (is_busy ?m1) (is_busy ?m2)
+            (is_pointed ?c ?m1) (is_pointed ?c ?m2)
+        )
     )
 
     ; The movers picks up the light/heavy crate when it has reached it
     (:action pick_up_together
         :parameters (?m1 - obj ?m2 - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m1) (mover ?m2)
-                        (not (= ?m1 ?m2)) ; the movers are different
-                        (is_empty ?m1) (is_empty ?m2)
-                        (is_pointed ?c ?m1) (is_pointed ?c ?m2)
-                        (is_busy ?m1) (is_busy ?m2)
-                        (<= (distance_cr ?c ?m1) 0) (<= (distance_cr ?c ?m2) 0)
-                    )
+            (not (= ?m1 ?m2)) ; the movers are different
+            (is_empty ?m1) (is_empty ?m2)
+            (is_pointed ?c ?m1) (is_pointed ?c ?m2)
+            (is_busy ?m1) (is_busy ?m2)
+            (<= (distance_cr ?c ?m1) 0) (<= (distance_cr ?c ?m2) 0)
+        )
         :effect (and (not(is_empty ?m1)) (not(is_empty ?m2)) 
-            (assign (timer ?m1) 0) (assign (timer ?m2) 0))
+            (assign (timer ?m1) 0) (assign (timer ?m2) 0)
+        )
     )
 
     ; The movers are holding the light/heavy_crate
-    (:event holding_light_crate
+    (:event holding_heavy_crate
         :parameters (?m1 - obj ?m2 - obj ?c - obj ?loc - obj)
         :precondition (and (mover ?m1) (mover ?m2) (crate ?c) (location ?loc)
+            (is_pointed ?c ?m1) (is_pointed ?c ?m2)
             (not(is_empty ?m1)) (not(is_empty ?m2)) 
             (= (timer ?m1) 0) (= (timer ?m2) 0) ; action pick_up
         )
         :effect (and (assign (timer ?m1) (/(*(distance_cl ?c ?loc)(weight_crate ?c)) 100))
             (assign (timer ?m2) (/(*(distance_cl ?c ?loc)(weight_crate ?c)) 100)))
     )
-
+    
     ; PROCESS MOVE FULL TOGETHER
     (:process move_full_together
         :parameters (?m1 - obj ?m2 - obj ?c - obj ?loc - obj)
         :precondition (and (crate ?c) (mover ?m1) (mover ?m2) (location ?loc)
-                        (not(= ?m1 ?m2)) ; the movers are different
-                        (not(is_empty ?m1)) (is_pointed ?c ?m1) (is_busy ?m1)
-                        (not(is_empty ?m2)) (is_pointed ?c ?m2) (is_busy ?m2)
-                        (> (distance_cl ?c ?loc) 0)
-                        (> (timer ?m1) 0)
-                        (> (timer ?m2) 0)
-                    )
+            (not(= ?m1 ?m2)) ; the movers are different
+            (not(is_empty ?m1)) (is_pointed ?c ?m1) (is_busy ?m1)
+            (not(is_empty ?m2)) (is_pointed ?c ?m2) (is_busy ?m2)
+            (> (distance_cl ?c ?loc) 0)
+            (> (timer ?m1) 0)
+            (> (timer ?m2) 0)
+        )
         :effect (and (decrease (distance_cl ?c ?loc) (* #t (timer ?m1))))
     )
 
@@ -208,17 +213,18 @@
     (:action put_down_together
         :parameters (?m1 - obj ?m2 - obj ?c - obj ?loc - obj); ?l - obj)
         :precondition (and (mover ?m1) (mover ?m2) (crate ?c) (location ?loc) ;(loader ?l) 
-                        (not(= ?m1 ?m2)) 
-                        (not(is_empty ?m1)) (not(is_empty ?m2))
-                        (is_pointed ?c ?m1) (is_pointed ?c ?m2)
-                        (is_busy ?m1) (is_busy ?m2)
-                        (is_empty ?loc) ;(is_empty ?l)
-                        (not(on_load ?c))
-                        (<= (distance_cl ?c ?loc) 0)
-                    )
+            (not(= ?m1 ?m2)) 
+            (not(is_empty ?m1)) (not(is_empty ?m2))
+            (is_pointed ?c ?m1) (is_pointed ?c ?m2)
+            (is_busy ?m1) (is_busy ?m2)
+            (is_empty ?loc) ;(is_empty ?l)
+            (not(on_load ?c))
+            (<= (distance_cl ?c ?loc) 0)
+        )
         :effect (and (on_load ?c) (is_empty ?m1) (is_empty ?m2) (not(is_busy ?m1)) (not(is_busy ?m2))
-                        (not(is_pointed ?c ?m1)) (not(is_pointed ?c ?m2)) (not(is_empty ?loc))
-                        (assign (timer ?m1) 0) (assign (timer ?m2) 0))
+            (not(is_pointed ?c ?m1)) (not(is_pointed ?c ?m2)) (not(is_empty ?loc))
+            (assign (timer ?m1) 0) (assign (timer ?m2) 0)
+        )
     )
 
     ; LOADER PART
