@@ -31,21 +31,14 @@
         (= (timer loader1) 0)
 
         ; Distances between crates and loading bay
-        (= (distance_cl crate1 loading_bay) 10)
-        (= (distance_cl crate2 loading_bay) 20)
-        (= (distance_cl crate3 loading_bay) 20)
-        (= (distance_cl crate4 loading_bay) 10)
+        (= (distance_cl crate1) 10)
+        (= (distance_cl crate2) 20)
+        (= (distance_cl crate3) 20)
+        (= (distance_cl crate4) 10)
 
 		; Distances between crates and movers
-        (= (distance_cr crate1 mover1) 10)
-        (= (distance_cr crate2 mover1) 20)
-        (= (distance_cr crate3 mover1) 20)
-        (= (distance_cr crate4 mover1) 10)
-
-        (= (distance_cr crate1 mover2) 10)
-        (= (distance_cr crate2 mover2) 20)
-        (= (distance_cr crate3 mover2) 20)
-        (= (distance_cr crate4 mover2) 10)
+        (= (distance_cm mover1) 1)
+        (= (distance_cm mover2) 1)
 	)
 
 	(:goal
