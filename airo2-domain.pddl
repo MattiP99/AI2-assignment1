@@ -68,7 +68,6 @@
         :parameters (?m - obj ?c - obj)
         :precondition (and (mover ?m) (crate ?c) 
             ; Mover
-            (is_pointing ?m) ; the mover is pointing a crate
             (not(reached ?m)) ; the mover still not reached the crate
 
             ; Crate
@@ -82,7 +81,6 @@
         :parameters (?m - obj ?c - obj)
         :precondition (and (mover ?m) (crate ?c)
             ; Mover
-            (is_pointing ?m) ; the mover is pointing a crate
             (not(reached ?m)) ; the mover still not reached the crate
             (<= (distance_cm ?m) 0.0) ; the distance between the mover and the crate is less or equals to zero
 
@@ -99,7 +97,6 @@
         :parameters (?m1 - obj ?m2 - obj ?c - obj)
         :precondition (and (mover ?m1) (mover ?m2) (crate ?c)
             ; Mover 
-            (is_pointing ?m1) ; the mover is pointing the crate
             (is_empty ?m1) ; the mover is empty
             (reached ?m1) ; the mover reached the crate
             (not(is_pointed ?c ?m2)) ; the other mover is not pointed the crate
@@ -118,7 +115,6 @@
         :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m)
             ; Mover
-            (is_pointing ?m) ; the mover is pointing the crate
             (reached ?m) ; the mover reached the crate
             (not(is_empty ?m)) ; the mover is holding a crate
             ;(> (timer ?m) 0) ; the mover's step is greater than 0
@@ -137,7 +133,6 @@
         :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c)
             ; Mover
-            (is_pointing ?m) ; the mover is pointing the crate
             (reached ?m) ; the mover reached the crate
             (not(is_empty ?m)) ; the mover is holding a crate
             (<= (timer ?m) 0.0)
