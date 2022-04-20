@@ -13,25 +13,24 @@
 	)
 
     (:predicates
-        (heavy ?c)
-
         (mover ?m - obj)
         (loader ?l - obj)
         (crate ?c - obj) 
         (location ?loc - obj)
         
+        (heavy ?c) ; the crate is heavy
         (on_load ?c) ; the crate is on the loading bay
-        (at_location ?c - obj) ; crate c is at location 
-        (is_pointed ?c - obj ?r - obj) ; crate c is pointed by robot r
+        (at_location ?c - obj) ; the crate in on the conveyor bel
+        (is_pointed ?c - obj ?r - obj) ; the crate is pointed by the mover/loader
         (is_pointing ?m) ; the mover is pointing a crate
-        (reached ?r - obj) ; robot r reached the crate 
-        (is_empty ?rb - obj) ; robot r and/or loading bay b is empty 
+        (reached ?obj - obj) ; the mover/crate reached the crate/loading bay
+        (is_empty ?rb - obj) ; the mover/loader/loading bay is free
     )
 
     (:functions
         (weigth_coeff ?c - obj) - number ; light or heavy crate coefficient
         (weight_crate ?c - obj) - number ; weight of the crate
-        (timer ?r - obj) - number ; step/timer size
+        (timer ?r - obj) - number ; timer
         (distance_cl ?c - obj) - number ; distance between the crate and the loading bay
         (distance_cm ?m - obj) - number ; distance between the crate and the mover
     )
