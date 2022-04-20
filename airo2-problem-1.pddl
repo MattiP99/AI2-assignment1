@@ -18,6 +18,11 @@
         (is_empty loading_bay)
         
         (heavy crate1)
+        
+        (= (weigth_coeff crate1) 1)
+        (= (weigth_coeff crate2) 1.5)
+        (= (weigth_coeff crate3) 1.5)
+        
 
         ; Crates' weight
 		(= (weight_crate crate1) 70) 

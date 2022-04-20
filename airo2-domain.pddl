@@ -29,6 +29,7 @@
     )
 
     (:functions
+        (weigth_coeff ?c - obj) - number ; light or heavy crate coefficient
         (weight_crate ?c - obj) - number ; weight of the crate
         (timer ?r - obj) - number ; step/timer size
         (distance_cl ?c - obj) - number ; distance between the crate and the loading bay
@@ -48,6 +49,7 @@
             
             ; Crate
             (not(heavy ?c)) ; (< (weight_crate ?c) 50) the crate is light
+            (not(at_location ?c)) ; the crate is not on the conveyor belt
             (not(on_load ?c)) ; the crate has not been loaded on the loading bay
             (not(is_pointed ?c ?m1)) ; the crate is not pointed by the active mover
             (or (not(is_pointed ?c ?m2)) ; the other mover is not pointed the crate or
@@ -72,7 +74,7 @@
             ; Crate
             (is_pointed ?c ?m) ; the crate is pointed by the active mover
         )  
-        :effect (and (decrease (distance_cm ?m) (* #t 10))) ; the mover moves against the crate
+        :effect (and (decrease (distance_cm ?m) (* #t 10.0))) ; the mover moves against the crate
     )
 
     ; The robot reached the crate
@@ -82,28 +84,32 @@
             ; Mover
             (is_pointing ?m) ; the mover is pointing a crate
             (not(reached ?m)) ; the mover still not reached the crate
-            (<= (distance_cm ?m) 0) ; the distance between the mover and the crate is less or equals to zero
+            (<= (distance_cm ?m) 0.0) ; the distance between the mover and the crate is less or equals to zero
 
             ; Crate
             (is_pointed ?c ?m) ; the crate is pointed by the active mover
         )
-        :effect (and (reached ?m)) ; the mover reached the crate
+        :effect (and (reached ?m) ; the mover reached the crate
+            (assign (distance_cm ?m) 1.0) ; default
+        ) 
     )
     
     ; The mover picks up the light crate
     (:action pick_up
-        :parameters (?m - obj ?c - obj)
-        :precondition (and (mover ?m) (crate ?c)
+        :parameters (?m1 - obj ?m2 - obj ?c - obj)
+        :precondition (and (mover ?m1) (mover ?m2) (crate ?c)
             ; Mover 
-            (is_empty ?m) ; the mover is empty
-            (reached ?m) ; the mover reached the crate
+            (is_pointing ?m1) ; the mover is pointing the crate
+            (is_empty ?m1) ; the mover is empty
+            (reached ?m1) ; the mover reached the crate
+            (not(is_pointed ?c ?m2)) ; the other mover is not pointed the crate
 
             ; Crate
             (not(heavy ?c)) ; (< (weight_crate ?c) 50) ; the crate is light
-            (is_pointed ?c ?m) ; the crate is pointed by the mover
+            (is_pointed ?c ?m1) ; the crate is pointed by the mover
         )
-        :effect (and (not(is_empty ?m)) ; the mover is not empty
-            (assign (timer ?m) (/ (* (distance_cl ?c) (weight_crate ?c)) 100)) ; set the step size 
+        :effect (and (not(is_empty ?m1)) ; the mover is not empty
+            (assign (timer ?m1) (/ (* (distance_cl ?c) (weight_crate ?c)) 100.0)) ; set the step size 
         )
     )
 
@@ -112,24 +118,34 @@
         :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m)
             ; Mover
+            (is_pointing ?m) ; the mover is pointing the crate
+            (reached ?m) ; the mover reached the crate
             (not(is_empty ?m)) ; the mover is holding a crate
-            (> (timer ?m) 0) ; the mover's step is greater than 0
+            ;(> (timer ?m) 0) ; the mover's step is greater than 0
             
             ; Crate
-            (not(heavy ?c)) ; the crate il light
-            (is_pointed ?c ?m)  ; the crate is pointed by the mover
+            (not(heavy ?c)) ; the crate is light
+            (is_pointed ?c ?m) ; the crate is pointed by the mover
             (not(reached ?c)) ; the crate still not reached the loading bay
-            
         )
-        :effect (and (decrease (distance_cl ?c) (* (timer ?m) #t))) ; the distance bewteen crate and loading bay decrease
+        :effect (and (decrease (timer ?m) (* #t 1.0)))
+        ;(decrease (distance_cl ?c) (* (timer ?m) #t))) ; the distance bewteen crate and loading bay decrease
     )
 
     ; The crate reached the loading bay
     (:event distance_cl_zero
-        :parameters (?c - obj)
+        :parameters (?m - obj ?c - obj)
         :precondition (and (crate ?c)
+            ; Mover
+            (is_pointing ?m) ; the mover is pointing the crate
+            (reached ?m) ; the mover reached the crate
+            (not(is_empty ?m)) ; the mover is holding a crate
+            (<= (timer ?m) 0.0)
+
+            ; Crate
+            (is_pointed ?c ?m) ; the crate is pointed by the mover
             (not(reached ?c)) ; the crate still not reached the loading bay
-            (<= (distance_cl ?c) 0) ; the distance between the crate and the loading bay is less or equals to zero
+            ;(<= (distance_cl ?c) 0) ; the distance between the crate and the loading bay is less or equals to zero
         )
         :effect (and (reached ?c)) ; the crate reached the loading bay
     )
@@ -176,7 +192,7 @@
             
             ; Loader
             (is_empty ?l) ; the loader is free
-            (= (timer ?l) 0) ; default
+            (<= (timer ?l) 0.0) ; default
 
             ; Location
             (not(is_empty ?loc)) ; the location is not empty
@@ -184,7 +200,7 @@
         :effect (and (is_pointed ?c ?l) ; the crate is pointed by the loader 
             
             (not(is_empty ?l)) ; the loader is not free
-            (assign (timer ?l) 4) ; default time to load a crate from the loading bay to the conveyor belt
+            (assign (timer ?l) 4.0) ; default time to load a crate from the loading bay to the conveyor belt
         )
     )
 
@@ -198,7 +214,7 @@
             ; Location
             (not(is_empty ?loc)) ; the location is not empty
         )
-        :effect (and (decrease (timer ?l) #t))
+        :effect (and (decrease (timer ?l) (* #t 1.0)))
     )
 
     ; The loader is on the conveyor belt
@@ -207,7 +223,7 @@
         :precondition (and (loader ?l) (location ?loc) 
             ; Loader
             (not(is_empty ?l)) ; the loader is not free
-            (= (timer ?l) 0) ; the loader finished to move against the conveyor belt
+            (= (timer ?l) 0.0) ; the loader finished to move against the conveyor belt
 
             ; Location
             (not(is_empty ?loc)) ; the location is not empty
@@ -229,6 +245,7 @@
             (is_empty ?loc) ; the loading bay is empty
         )
         :effect (and (not(is_pointed ?c ?l)) ; the crate is not pointed by the loader
+            (not(on_load ?c)) ; the crate is not on the loading bay
             (at_location ?c) ; the crate is on the conveyor belt
         
             (is_empty ?l) ; the loader is free 
@@ -248,6 +265,7 @@
             
             ; Crate
             (heavy ?c) ; (>= (weight_crate ?c) 50) ; the crate is heavy
+            (not(at_location ?c)) ; the crate is not on the conveyor belt
             (not(on_load ?c)) ; the crate is not on the loading bay
             (not(is_pointed ?c ?m1)) (not(is_pointed ?c ?m2)) ; the crate is not pointed by the movers
         ) 
@@ -260,8 +278,8 @@
         )
     )
 
-    ; The movers pick up the light/heavy crate
-    (:action pick_up_together
+    ; The movers pick up the heavy crate
+    (:action pick_up_together_heavy
         :parameters (?m1 - obj ?m2 - obj ?c - obj)
         :precondition (and (crate ?c) (mover ?m1) (mover ?m2)
             ; Movers
@@ -270,11 +288,31 @@
             (reached ?m1) (reached ?m2) ; the movers reached the crate
 
             ; Crate
+            (heavy ?c) ; the crate is heavy
             (is_pointed ?c ?m1) (is_pointed ?c ?m2) ; the crate is pointed by the movers
         )
         :effect (and (not(is_empty ?m1)) (not(is_empty ?m2)) ; the movers are not free
-            (assign (timer ?m1) (/ (* (distance_cl ?c) (weight_crate ?c)) 100)) ; set the step size 
-            (assign (timer ?m2) (/ (* (distance_cl ?c) (weight_crate ?c)) 100)) ; set the step size 
+            (assign (timer ?m1) (/ (* (distance_cl ?c) (weight_crate ?c)) 100));(* 100.0 (weigth_coeff ?c)))) ; set the step size 
+            (assign (timer ?m2) (/ (* (distance_cl ?c) (weight_crate ?c)) 100));(* 100.0 (weigth_coeff ?c)))) ; set the step size 
+        )
+    )
+
+    ; The movers pick up the light crate
+    (:action pick_up_together_light
+        :parameters (?m1 - obj ?m2 - obj ?c - obj)
+        :precondition (and (crate ?c) (mover ?m1) (mover ?m2)
+            ; Movers
+            (not (= ?m1 ?m2)) ; the movers are different
+            (is_empty ?m1) (is_empty ?m2) ; the movers are free
+            (reached ?m1) (reached ?m2) ; the movers reached the crate
+
+            ; Crate
+            (not(heavy ?c)) ; the crate is light
+            (is_pointed ?c ?m1) (is_pointed ?c ?m2) ; the crate is pointed by the movers
+        )
+        :effect (and (not(is_empty ?m1)) (not(is_empty ?m2)) ; the movers are not free
+            (assign (timer ?m1) (/ (* (distance_cl ?c) (weight_crate ?c)) 150));(* 100.0 (weigth_coeff ?c)))) ; set the step size 
+            (assign (timer ?m2) (/ (* (distance_cl ?c) (weight_crate ?c)) 150));(* 100.0 (weigth_coeff ?c)))) ; set the step size 
         )
     )
 
@@ -285,13 +323,15 @@
             ; Movers
             (not(= ?m1 ?m2)) ; the movers are different
             (not(is_empty ?m1)) (not(is_empty ?m2)) ; the movers are not free
-            (> (timer ?m1) 0) (> (timer ?m2) 0) ; the movers' step is greater than 0
+            (> (timer ?m1) 0.0) (> (timer ?m2) 0.0) ; the movers' step is greater than 0
 
             ; Crate
             (is_pointed ?c ?m1) (is_pointed ?c ?m2) ; the crate is pointed by the movers  
             (not(reached ?c)) ; the crate still not reached the loading bay
         )
-        :effect (and (decrease (distance_cl ?c) (* #t (timer ?m1)))) ; the distance bewteen crate and loading bay decrease
+        :effect (and (decrease (timer ?m1) (* #t 1.0))
+            (decrease (timer ?m2) (* #t 1.0))
+        );(decrease (distance_cl ?c) (* #t (timer ?m1)))) ; the distance between crate and loading bay decrease
     )
 
     ; If the loading bay is free, the movers put down the light/heavy crate
