@@ -121,8 +121,8 @@
                             (not(at_location ?c)) ; the crate is not on the conveyor belt
                             (not(on_loading_bay ?c)) ; the crate is not on the loading bay
                             (not(is_pointed ?c ?m1)) (not(is_pointed ?c ?m2)) ; the crate is not pointed by the movers
-                            (> (battery_level ?m1) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
-                            (> (battery_level ?m2) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
+                            ;(> (battery_level ?m1) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
+                            ;(> (battery_level ?m2) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
         ) 
         :effect (and (is_pointing ?m1) (is_pointing ?m2) ; the movers are pointing the crate
 
@@ -157,7 +157,7 @@
             (or (crate_light_reached ?m) (crate_heavy_reached ?c ?m)) ; the mover reached the crate
             (mover_busy ?m) ; the mover is holding a crate
             ;(> (timer ?m) 0) ; the mover's step is greater than 0
-            
+            (charged ?m)
             ; Crate
             (< (weight_crate ?c) 50) ; (not(heavy ?c))  the crate is light
             (is_pointed ?c ?m) ; the crate is pointed by the mover
@@ -176,7 +176,8 @@
             (not(= ?m1 ?m2)) ; the movers are different
             (mover_busy ?m1) (mover_busy ?m2) ; the movers are not free
             (> (timer ?m1) 0.0) (> (timer ?m2) 0.0) ; the movers' step is greater than 0
-
+            (charged ?m1) (charged ?m2)
+            
             ; Crate
             (is_pointed ?c ?m1) (is_pointed ?c ?m2) ; the crate is pointed by the movers  
             (not(loading_bay_reached ?c)) ; the crate still not reached the loading bay

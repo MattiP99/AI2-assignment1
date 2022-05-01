@@ -31,7 +31,7 @@
         
 
         ; Crates' weight
-	(= (weight_crate crate1) 20) 
+	(= (weight_crate crate1) 70) 
         (= (weight_crate crate2) 20)
         (= (weight_crate crate3) 20)
         (= (weight_crate crate4) 20)
@@ -41,7 +41,7 @@
         (= (timer mover1) 0) 
         (= (timer mover2) 0)
         (= (timer_waiting_for_free_loading_bay mover1) 0)
-         (= (timer_waiting_for_free_loading_bay mover2) 0)
+        (= (timer_waiting_for_free_loading_bay mover2) 0)
         
         
        
@@ -60,7 +60,7 @@
         (= (distance_cl crate4) 20)
         (= (distance_cl crate5) 20)
 
-		; Distances between crates and movers
+        ; Distances between crates and movers
         (= (distance_cm mover1) 1)
         (= (distance_cm mover2) 1)
 	)
