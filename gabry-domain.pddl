@@ -2,10 +2,10 @@
 
     (:requirements
        :time
-        :typing
-        :equality
-        :negative-preconditions 
-        :disjunctive-preconditions
+       :typing
+       :equality
+       :negative-preconditions 
+       :disjunctive-preconditions
     )
 
     (:types
@@ -31,26 +31,17 @@
 
     ;++++++++++++++++++++++++++++++ crate predicates ++++++++++++++++++++++++++++++
         (crate ?c - crate) 
-        (heavy ?c - crate) ; the crate is heavy
+        ; (heavy ?c - crate) ; the crate is heavy
         (on_loading_bay ?c - crate) ; the crate is on the loading bay
         (at_location ?c - crate) ; the crate is on the conveyor bel
         (is_pointed ?c - crate ?r - mover) ; the crate is pointed by the mover/loader
 
     ;+++++++++++++++++++++++++++++++++++ others +++++++++++++++++++++++++++++++++++
-        (crate_light_reached ?c - crate ?m - mover)
-        (crate_light_pointed ?c - crate ?m - mover)
-        (crate_light_delivering ?c -crate ?m - mover)
-        (crate_light_delivered ?c - crate ?m - mover)
-
-        (crate_heavy_reached ?c - crate ?m - mover)
-        (crate_heavy_pointed ?c - crate ?m - mover)
-        (crate_heavy_delivering ?c -crate ?m - mover)
-        (crate_heavy_delivered ?c - crate ?m - mover)
+        (crate_reached ?c - crate ?m - mover)
         (loading_bay_reached ?c - crate) ; the crate has reached the loading bay
         (location ?loc - location)
         (is_empty ?loc - location)
-        
-        
+    
     )
 
     (:functions
@@ -72,7 +63,6 @@
         (timer_loading_crate ?c - crate ?l - loader) - number
         (timer_waiting_for_free_loading_bay ?m - mover) - number ; during the problem we want to minimize this --> (:metric minimize (timer_waiting_for_free_loadingbay))
 
-        (loading_has_crate ?l - loading_bay) - number ; counter for light crates on the loading bay
         (distance_cl ?c - crate) - number ; distance between the crate and the loading bay
         (distance_cm ?m - mover) - number ; distance between the crate and the mover
     )
@@ -140,7 +130,7 @@
         :parameters (?m - mover ?c - crate)
         :precondition (and (mover ?m) (crate ?c) 
                             ; Mover
-                            (not(crate_light_reached ?c ?m)) (not(crate_heavy_reached ?c ?m)) ; the mover still not reached the crate
+                            (not(crate_reached ?c ?m)) ; the mover still not reached the crate
                             (charged ?m)
                             ; Crate
                             (is_pointed ?c ?m) ; the crate is pointed by the active mover
@@ -154,7 +144,7 @@
         :parameters (?m - mover ?c - crate)
         :precondition (and (crate ?c) (mover ?m)
             ; Mover
-            (or (crate_light_reached ?m) (crate_heavy_reached ?c ?m)) ; the mover reached the crate
+            (crate_reached ?c ?m) ; the mover reached the crate
             (mover_busy ?m) ; the mover is holding a crate
             ;(> (timer ?m) 0) ; the mover's step is greater than 0
             (charged ?m)
@@ -197,7 +187,7 @@
         :precondition (and (mover ?m1) (mover ?m2) (crate ?c)
             ; Mover 
             (not(mover_busy ?m1)) ; the mover is empty
-            (crate_light_reached ?c ?m1) ; the mover reached the crate
+            (crate_reached ?c ?m1) ; the mover reached the crate
             (not(is_pointed ?c ?m2)) ; the other mover is not pointed the crate
 
             ; Crate
@@ -216,7 +206,7 @@
             ; Movers
             (not (= ?m1 ?m2)) ; the movers are different
             (not(mover_busy ?m1)) (not(mover_busy ?m2)) ; the movers are free
-            (crate_heavy_reached ?c ?m1) (crate_heavy_reached ?c ?m2) ; the movers reached the crate
+            (crate_reached ?c ?m1) (crate_reached ?c ?m2) ; the movers reached the crate
 
             ; Crate
             (>= (weight_crate ?c) 50);(heavy ?c) the crate is heavy
@@ -235,7 +225,7 @@
             ; Movers
             (not (= ?m1 ?m2)) ; the movers are different
             (not(mover_busy ?m1)) (not(mover_busy ?m2)) ; the movers are free
-            (crate_light_reached ?c ?m1) (crate_light_reached ?c ?m2) ; the movers reached the crate
+            (crate_reached ?c ?m1) (crate_reached ?c ?m2) ; the movers reached the crate
 
             ; Crate
             (< (weight_crate ?c) 50) ;(not(heavy ?c))  the crate is light
@@ -272,7 +262,7 @@
 
                        
         )
-        :effect (and (not(crate_light_reached ?c ?m1)) (not(crate_heavy_reached ?c ?m1)) ; the mover did not reached any crate
+        :effect (and (not(crate_reached ?c ?m1)) ; the mover did not reached any crate
             (not(is_pointing ?m1)) ; the mover is not pointing any crate
             (not(mover_busy ?m1)) ; the mover is empty
             (assign (distance_cm ?m1) 1) ; default
@@ -308,8 +298,7 @@
         )
         :effect (and (is_empty ?m1) (is_empty ?m2) ; the movers are free
             (not(is_pointing ?m1)) (not(is_pointing ?m2)) ; the movers are not pointing any crate
-            (not(crate_light_reached ?c ?m1)) (not(crate_heavy_reached ?c ?m2)) ; the movers did not reach any crate
-            (not(crate_light_reached ?c ?m2)) (not(crate_heavy_reached ?c ?m2))
+            (not(crate_reached ?c ?m1)) (not(crate_reached ?c ?m2)) ; the movers did not reach any crate
             (not(is_pointed ?c ?m1)) (not(is_pointed ?c ?m2)) ; the crate is not pointed by any mover
             (on_loading_bay ?c) ; the crate is on the loading bay 
 
@@ -347,7 +336,7 @@
         :parameters (?m - mover ?c - crate ?loc - location)
         :precondition (and (crate ?c) (mover ?m) (location ?loc)
             ; Mover
-            (crate_light_reached ?c ?m) ; the mover reached the crate
+            (crate_reached ?c ?m) ; the mover reached the crate
             (mover_busy ?m) ; the mover is holding a crate
             (<= (timer ?m) 0.0)
             (mover_waiting ?m)
@@ -401,9 +390,8 @@
             (mover_busy ?m1) ; the active mover is holding the crate
             (mover_busy ?m2) ; the active mover is holding the crate
             
-            (or (and (crate_heavy_reached ?m1) ; the mover reached the crate
-            (crate_heavy_reached ?m2)) (and (crate_light_reached ?c ?m1)
-            (crate_light_reached ?c ?m2))) ; the mover reached the crate
+            (crate_reached ?c ?m1) ; the mover reached the crate
+            (crate_reached ?c ?m2) ; the mover reached the crate
             
             (<= (timer ?m1) 0.0)
             (<= (timer ?m2) 0.0)
@@ -439,13 +427,13 @@
         :parameters (?m - mover ?c - crate)
         :precondition (and (mover ?m) (crate ?c)
             ; Mover
-            (or (not(crate_light_reached ?m)) (not(crate_heavy_reached ?m))) ; the mover still not reached the crate
+            (not(crate_reached ?c ?m)) ; the mover still not reached the crate
             (<= (distance_cm ?m) 0.0) ; the distance between the mover and the crate is less or equals to zero
 
             ; Crate
             (is_pointed ?c ?m) ; the crate is pointed by the active mover
         )
-        :effect (and (or (crate_light_reached ?c ?m) (crate_heavy_reached ?c ?m)) ; the mover reached the crate
+        :effect (and (crate_reached ?c ?m) ; the mover reached the crate
             (assign (distance_cm ?m) 1.0) ; default
         ) 
     )
@@ -455,7 +443,7 @@
         :parameters (?m - mover ?c - crate)
         :precondition (and (mover ?m) (crate ?c) 
             ; Mover
-            (or (crate_light_reached ?c ?m) (crate_heavy_reached ?c ?m)) ; the mover reached the crate
+            (crate_reached ?c ?m) ; the mover reached the crate
             (mover_busy ?m) ; the mover is holding a crate
             (<= (timer ?m) 0.0)
 
@@ -468,29 +456,8 @@
     )
 
 ;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++ BATTERY SECTION ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++;
-    
-    (:action activate-charger-heavy
-        :parameters (?m1 - mover ?m2 - mover ?c - crate)
-        :precondition (and  (mover ?m1) (mover ?m2) (crate ?c)
-        		      (not(= ?m1 ?m2)) ; the movers are different
-            			(not(mover_busy ?m1)) (not(mover_busy ?m2)) ; the movers are free
-            			(not(is_pointing ?m1)) (not(is_pointing ?m2)) ; the movers are not pointing the crate
-            
-           			 ; Crate
-            			(>= (weight_crate ?c) 50) ; (heavy ?c) the crate is heavy
-           			    (not(at_location ?c)) ; the crate is not on the conveyor belt
-            			(not(on_loading_bay ?c)) ; the crate is not on the loading bay
-            			(not(is_pointed ?c ?m1)) (not(is_pointed ?c ?m2)) ; the crate is not pointed by the movers
-        		      
-                             (< (battery_level ?m1) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
-                             (< (battery_level ?m2) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
-        )
-        ;refill battery_level at maximum        
-        :effect (and(assign (battery_level ?m1) 20)
-        		     (assign (battery_level ?m2) 20))
-    )
 
-    (:action activate-charger-light
+    (:action activate-charger
         :parameters (?m - mover ?c - crate)
         :precondition (and  (mover ?m)  (crate ?c)
         		      ; Movers
@@ -528,7 +495,7 @@
                             (not(mover_busy ?m)) ; the active mover is empty
                             (is_pointed ?c ?m)
                             (is_pointing ?m)
-                            (or (not(crate_light_reached ?m)) (not(crate_heavy_reached ?c ?m)))
+                            (not(crate_reached ?c ?m))
                             (not(charged ?m))
                             (>= (battery_level ?m) (+ (/(distance_cl ?c) 10) (/(*(distance_cl ?c) (weight_crate ?c)) (+ (*(fl-fragile-crate ?c) 50 ) 100))))
                         )
