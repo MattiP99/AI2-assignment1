@@ -76,9 +76,11 @@
 		(and 
 			(at_location crate1)
             (at_location crate2)
+            ;(loading_bay_reached crate3)
+            ;(need_recharging mover2)
+            (mover_busy mover1)
+            (mover_busy mover2)
             ;(at_location crate3)
-            (is_pointed crate3 mover1)
-            (is_pointed crate3 mover2)
             ;(at_location crate4)
 		)
 	)

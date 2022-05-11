@@ -91,18 +91,11 @@
     
     ; The battery level is down
     (:event need_recharging
-        :parameters (?m - mover ?c - crate)
-        :precondition (and (mover ?m) (crate ?c)
+        :parameters (?m - mover)
+        :precondition (and (mover ?m)
             ; Mover
-            (is_pointing ?m)
-            (mover_busy ?m) ; the mover is holding a crate
-            (crate_reached ?c ?m) ; the mover reached the crate
             (not(need_recharging ?m))
             (< (battery_level ?m) (timer ?m)) ; if the battery level is not enough
-
-            ; Crate
-            (is_pointed ?c ?m) ; the crate is pointed by the mover
-            (not(loading_bay_reached ?c)) ; the crate still not reached the loading bay
         )
         :effect (and (need_recharging ?m))
     )
@@ -162,13 +155,12 @@
         :precondition (and (mover ?m) (crate ?c)
             (is_pointing ?m) ; the active mover is not pointing anything
             (is_pointed ?c ?m) ; the crate is not pointed by the active mover
-            (= (distance_cm ?m) (distance_cl ?c))
+            (= (distance_cm ?m) (distance_cl ?c)) ; the mover is at the loading bay
 
             ; I want to check if battery level is enough to go to the crate and come back
             (or (<= (battery_level ?m) (*2 (/(distance_cl ?c) 10))) (need_recharging ?m))   
         ) 
-        :effect (and 
-            (assign (battery_level ?m) 20)
+        :effect (and (assign (battery_level ?m) 20)
             (not(need_recharging ?m))
         ) 
     )    
@@ -186,8 +178,7 @@
             (not(mover_busy ?m1)) ; the active mover is empty
             (not(is_pointing ?m1)) ; the active mover is not pointing anything
             (not(is_pointed ?c ?m1)) ; the crate is not pointed by the active mover
-            (and (>= (battery_level ?m1) (*2 (/(distance_cl ?c) 10))) (not(need_recharging ?m1))) ; the mover's battery is enough
-            ;(>= (battery_level ?m1) (distance_cm ?m1)) ; there is enough battery to bring the crate at destination
+            ;(and (>= (battery_level ?m1) (*2 (/(distance_cl ?c) 10))) (not(need_recharging ?m1))) ; the mover's battery is enough
 
             ; Crate
             (< (weight_crate ?c) 50) (not(heavy ?c)) ; the crate is light
@@ -217,7 +208,9 @@
             (not(= ?m1 ?m2)) ; the movers are different
             (not(mover_busy ?m1)) (not(mover_busy ?m2)) ; the movers are free
             (not(is_pointing ?m1)) (not(is_pointing ?m2)) ; the movers are not pointing the crate
-            
+            ;(and (>= (battery_level ?m1) (*2 (/(distance_cl ?c) 10))) (not(need_recharging ?m1))) ; the mover's battery is enough
+            ;(and (>= (battery_level ?m2) (*2 (/(distance_cl ?c) 10))) (not(need_recharging ?m2))) ; the mover's battery is enough
+
             ; Crate
             (>= (weight_crate ?c) 50) ;(heavy ?c) the crate is heavy
             (not(loading_bay_reached ?c))
@@ -283,8 +276,7 @@
             (not(need_recharging ?m1))
 
             ; Crate
-            (< (weight_crate ?c) 50) 
-            (not(heavy ?c)) ;the crate is light
+            (< (weight_crate ?c) 50) (not(heavy ?c)) ;the crate is light
             (is_pointed ?c ?m1) ; the crate is pointed by the mover
         )
         :effect (and (mover_busy ?m1) ; the mover is not empty
@@ -325,8 +317,7 @@
             (not(need_recharging ?m2))
 
             ; Crate
-            (< (weight_crate ?c) 50) 
-            (not(heavy ?c)) ; the crate is light
+            (< (weight_crate ?c) 50) (not(heavy ?c)) ; the crate is light
             (is_pointed ?c ?m1) (is_pointed ?c ?m2) ; the crate is pointed by the movers
         )
         :effect (and (mover_busy ?m1) (mover_busy ?m2) ; the movers are not free
@@ -362,8 +353,7 @@
             (not(= ?m1 ?m2)) ; the movers are different
             (mover_busy ?m1) (mover_busy ?m2) ; the movers are not free
             (> (timer ?m1) 0.0) (> (timer ?m2) 0.0) ; the movers' step is greater than 0
-            (not(need_recharging ?m1))
-            (not(need_recharging ?m2))
+            (not(need_recharging ?m1)) (not(need_recharging ?m2))
 
             ; Crate
             (is_pointed ?c ?m1) (is_pointed ?c ?m2) ; the crate is pointed by the movers  
@@ -466,9 +456,7 @@
             (on_loading_bay ?c) ; the crate is on the loading bay 
 
             (not(is_empty ?loc)) ; the loading bay is not free
-             (decrease (counter_group ?g) 1)
-            ;(assign (timer_waiting_for_free_loading_bay ?m1) 0)
-            ;(assign (timer_waiting_for_free_loading_bay ?m2) 0)
+            (decrease (counter_group ?g) 1)
         )
     )	
 	
