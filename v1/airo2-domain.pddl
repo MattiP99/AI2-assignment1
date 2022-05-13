@@ -87,7 +87,6 @@
             (not(= ?m1 ?m2)); the movers are different
             (not(mover_busy ?m1)) ; the active mover is empty
             (not(is_pointing ?m1)) ; the active mover is not pointing anything
-            (not(is_pointed ?c ?m1)) ; the crate is not pointed by the active mover
  
             ; Crate
             (< (weight_crate ?c) 50) (not(heavy ?c)) ; the crate is light
