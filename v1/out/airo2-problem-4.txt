@@ -1,0 +1,128 @@
+line 7:10 mismatched character ' ' expecting 'd'
+Domain parsed
+Problem parsed
+Grounding..
+Grounding Time: 57
+Aibr Preprocessing
+|F|:67
+|X|:8
+line 7:10 mismatched character ' ' expecting 'd'
+Aibr Preprocessing
+|A|:108
+|P|:48
+|E|:31
+Delta time heuristic model:1.0
+Delta time planning model:1.0
+Delta time search-execution model:1.0
+Delta time validation model:1
+H1 Setup Time (msec): 2
+Setting horizon to:NaN
+Helpful Action Pruning Activated
+Running Greedy Best First Search
+h(n = s_0)=882.0
+ g(n)= 1.0 h(n)=581.0
+ g(n)= 2.0 h(n)=323.0
+ g(n)= 4.0 h(n)=280.0
+ g(n)= 5.0 h(n)=174.0
+ g(n)= 7.0 h(n)=171.0
+ g(n)= 8.0 h(n)=165.0
+ g(n)= 12.0 h(n)=164.0
+ g(n)= 13.0 h(n)=162.0
+ g(n)= 14.0 h(n)=148.0
+ g(n)= 15.0 h(n)=145.0
+ g(n)= 16.0 h(n)=144.0
+ g(n)= 17.0 h(n)=143.0
+ g(n)= 18.0 h(n)=137.0
+ g(n)= 19.0 h(n)=110.0
+ g(n)= 21.0 h(n)=107.0
+ g(n)= 22.0 h(n)=101.0
+ g(n)= 28.0 h(n)=100.0
+ g(n)= 29.0 h(n)=98.0
+ g(n)= 36.0 h(n)=81.0
+ g(n)= 37.0 h(n)=67.0
+ g(n)= 38.0 h(n)=60.0
+ g(n)= 39.0 h(n)=54.0
+ g(n)= 42.0 h(n)=53.0
+ g(n)= 43.0 h(n)=49.0
+ g(n)= 45.0 h(n)=47.0
+ g(n)= 46.0 h(n)=41.0
+ g(n)= 50.0 h(n)=40.0
+ g(n)= 51.0 h(n)=38.0
+ g(n)= 59.0 h(n)=28.0
+ g(n)= 62.0 h(n)=26.0
+ g(n)= 63.0 h(n)=23.0
+ g(n)= 64.0 h(n)=17.0
+ g(n)= 73.0 h(n)=16.0
+ g(n)= 74.0 h(n)=14.0
+ g(n)= 82.0 h(n)=11.0
+ g(n)= 83.0 h(n)=9.0
+ g(n)= 91.0 h(n)=6.0
+ g(n)= 92.0 h(n)=4.0
+ g(n)= 99.0 h(n)=3.0
+ g(n)= 100.0 h(n)=1.0
+ g(n)= 101.0 h(n)=0.0
+Extracting plan with execution delta: 1.0
+Problem Solved
+
+Found Plan:
+0: (pointing_light mover2 mover1 crate6 group1)
+0.0: -----waiting---- [1.0]
+1.0: (pick_up mover2 mover1 crate6)
+1.0: -----waiting---- [3.0]
+3.0: (pointing_light mover1 mover2 crate2 group1)
+3.0: -----waiting---- [5.0]
+5.0: (pick_up mover1 mover2 crate2)
+5.0: -----waiting---- [9.0]
+9.0: (put_down mover2 mover1 crate6 loading_bay loader2 loader1 group1)
+9.0: (load_light loader2 loader1 crate6 loading_bay)
+9.0: -----waiting---- [13.0]
+13.0: (pointing_light mover2 mover1 crate1 group1)
+13.0: -----waiting---- [15.0]
+15.0: (pick_up mover2 mover1 crate1)
+15.0: -----waiting---- [21.0]
+21.0: (put_down mover2 mover1 crate1 loading_bay loader2 loader1 group1)
+21.0: (unload_light loader2 crate6)
+21.0: (load_light loader1 loader2 crate1 loading_bay)
+21.0: -----waiting---- [24.0]
+24.0: (put_down mover1 mover2 crate2 loading_bay loader2 loader1 group1)
+24.0: -----waiting---- [25.0]
+25.0: (pointing_light mover1 mover2 crate3 group2)
+25.0: -----waiting---- [26.0]
+26.0: (pick_up mover1 mover2 crate3)
+26.0: -----waiting---- [29.0]
+29.0: (pointing_light mover2 mover1 crate4 group2)
+29.0: -----waiting---- [31.0]
+31.0: (pick_up mover2 mover1 crate4)
+31.0: -----waiting---- [35.0]
+35.0: (load_light loader2 loader1 crate2 loading_bay)
+35.0: -----waiting---- [41.0]
+41.0: (unload_light loader2 crate2)
+41.0: (put_down mover1 mover2 crate3 loading_bay loader2 loader1 group2)
+41.0: (pointing_light mover1 mover2 crate5 group2)
+41.0: -----waiting---- [44.0]
+44.0: (pick_up mover1 mover2 crate5)
+44.0: -----waiting---- [53.0]
+53.0: (load_light loader2 loader1 crate3 loading_bay)
+53.0: -----waiting---- [59.0]
+59.0: (unload_light loader1 crate1)
+59.0: (put_down mover2 mover1 crate4 loading_bay loader1 loader2 group2)
+59.0: (load_light loader1 loader2 crate4 loading_bay)
+59.0: -----waiting---- [65.0]
+65.0: (unload_light loader2 crate3)
+65.0: (put_down mover1 mover2 crate5 loading_bay loader1 loader2 group2)
+65.0: (unload_light loader1 crate4)
+65.0: (load_light loader2 loader1 crate5 loading_bay)
+65.0: -----waiting---- [71.0]
+71.0: (unload_light loader2 crate5)
+
+Plan-Length:120
+Elapsed Time: 71.0
+Metric (Search):101.0
+Planning Time (msec): 345
+Heuristic Time (msec): 41
+Search Time (msec): 64
+Expanded Nodes:128
+States Evaluated:317
+Fixed constraint violations during search (zero-crossing):0
+Number of Dead-Ends detected:5
+Number of Duplicates detected:61
