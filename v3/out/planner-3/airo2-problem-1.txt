@@ -1,0 +1,90 @@
+line 9:10 mismatched character ' ' expecting 'd'
+Domain parsed
+Problem parsed
+Grounding..
+Grounding Time: 55
+Aibr Preprocessing
+|F|:41
+|X|:10
+line 9:10 mismatched character ' ' expecting 'd'
+Aibr Preprocessing
+|A|:49
+|P|:23
+|E|:19
+Delta time heuristic model:1.0
+Delta time planning model:1.0
+Delta time search-execution model:1.0
+Delta time validation model:1
+H1 Setup Time (msec): 1
+Setting horizon to:NaN
+Helpful Action Pruning Activated
+Running Greedy Best First Search
+h(n = s_0)=348.0
+ g(n)= 3.0 h(n)=274.3
+ g(n)= 4.0 h(n)=137.0
+ g(n)= 8.0 h(n)=120.0
+ g(n)= 9.0 h(n)=65.0
+ g(n)= 18.0 h(n)=48.1
+ g(n)= 19.0 h(n)=45.1
+ g(n)= 20.0 h(n)=44.1
+ g(n)= 21.0 h(n)=43.1
+ g(n)= 22.0 h(n)=42.1
+ g(n)= 23.0 h(n)=41.1
+ g(n)= 24.0 h(n)=40.1
+ g(n)= 25.0 h(n)=34.1
+ g(n)= 26.0 h(n)=27.0
+ g(n)= 27.0 h(n)=23.0
+ g(n)= 28.0 h(n)=20.0
+ g(n)= 29.0 h(n)=14.0
+ g(n)= 33.0 h(n)=13.0
+ g(n)= 34.0 h(n)=11.0
+ g(n)= 39.0 h(n)=9.0
+ g(n)= 40.0 h(n)=6.0
+ g(n)= 41.0 h(n)=4.0
+ g(n)= 46.0 h(n)=3.0
+ g(n)= 47.0 h(n)=1.0
+ g(n)= 48.0 h(n)=0.0
+Extracting plan with execution delta: 1.0
+Problem Solved
+
+Found Plan:
+0: (pointing_light mover2 mover1 crate2 group1)
+0: (charge_battery_at_starting_point mover2 crate2)
+0.0: -----waiting---- [2.0]
+2.0: (pick_up mover2 mover1 crate2)
+2.0: -----waiting---- [6.0]
+6.0: (put_down mover2 mover1 crate2 loading_bay loader1 loader2 group1)
+6.0: (pointing_heavy mover2 mover1 crate1 group1)
+6.0: -----waiting---- [7.0]
+7.0: (charge_battery_at_starting_point mover1 crate1)
+7.0: -----waiting---- [8.0]
+8.0: (pick_up_together_heavy mover2 mover1 crate1)
+8.0: -----waiting---- [11.0]
+11.0: (load_light loader1 loader2 crate2 loading_bay)
+11.0: -----waiting---- [16.0]
+16.0: (put_down_together mover2 mover1 crate1 loading_bay loader2 group1)
+16.0: -----waiting---- [17.0]
+17.0: (pointing_light mover1 mover2 crate3 group2)
+17.0: -----waiting---- [19.0]
+19.0: (pick_up mover1 mover2 crate3)
+19.0: -----waiting---- [23.0]
+23.0: (load_heavy loader2 crate1 loading_bay)
+23.0: -----waiting---- [27.0]
+27.0: (unload_light loader2 crate1)
+27.0: (put_down mover1 mover2 crate3 loading_bay loader1 loader2 group2)
+27.0: (unload_light loader1 crate2)
+27.0: (load_light loader1 loader2 crate3 loading_bay)
+27.0: -----waiting---- [31.0]
+31.0: (unload_light loader1 crate3)
+
+Plan-Length:59
+Elapsed Time: 31.0
+Metric (Search):48.0
+Planning Time (msec): 330
+Heuristic Time (msec): 17
+Search Time (msec): 31
+Expanded Nodes:66
+States Evaluated:139
+Fixed constraint violations during search (zero-crossing):0
+Number of Dead-Ends detected:14
+Number of Duplicates detected:32
