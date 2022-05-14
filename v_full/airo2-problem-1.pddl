@@ -46,6 +46,16 @@
         (= (distance_cl crate1) 10)
         (= (distance_cl crate2) 20)
         (= (distance_cl crate3) 20)
+        
+        ; Distances at which the crates should be released if too far from the loading bay
+        (= (distance_rc crate1) 0)
+        (= (distance_rc crate2) 0)
+        (= (distance_rc crate3) 0)
+        
+        
+        ; Battery levels
+	(= (battery_level mover1) 5)
+        (= (battery_level mover2) 5)
 		
 		; Initialization timer
         (= (timer mover1) 0) 

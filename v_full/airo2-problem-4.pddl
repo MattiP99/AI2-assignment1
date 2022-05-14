@@ -56,6 +56,19 @@
         (= (distance_cl crate4) 20)
         (= (distance_cl crate5) 30)
         (= (distance_cl crate6) 10)
+        
+        
+         (= (distance_rc crate1) 0)
+        (= (distance_rc crate2) 0)
+        (= (distance_rc crate3) 0)
+        (= (distance_rc crate4) 0)
+         (= (distance_rc crate5) 0)
+        (= (distance_rc crate6) 0)
+        
+        ; Battery levels
+	(= (battery_level mover1) 5)
+        (= (battery_level mover2) 5)
+        
 
         ; Initialization timer
         (= (timer mover1) 0) 
